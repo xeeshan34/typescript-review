@@ -1,469 +1,723 @@
-# TypeScript Notes
+# TypeScript Notes 📘
 
-TypeScript is a **superset of JavaScript** built on top of JavaScript. It adds **static typing**, which helps us catch many errors during development and before they reach production.
-
-TypeScript code is eventually **compiled/transpiled into JavaScript**, which can then run in browsers, Node.js, and other JavaScript environments.
+Personal notes and code snippets while learning **TypeScript** — a strongly typed superset of JavaScript that helps catch errors at compile time instead of in production.
 
 ---
 
-# TypeScript Setup
+## Table of Contents
 
-## 1. Install TypeScript Globally
-
-```bash
-npm install -g typescript
-```
-
-This installs TypeScript globally so that the `tsc` command can be used from anywhere in the terminal.
+- [Setup](#setup)
+- [Primitive Types](#primitive-types)
+- [Arrays & Tuples](#arrays--tuples)
+- [Enums](#enums)
+- [Any vs Unknown vs Void](#any-vs-unknown-vs-void)
+- [Type Inference](#type-inference)
+- [Functions](#functions)
+- [Objects & Interfaces](#objects--interfaces)
+- [Type Aliases](#type-aliases)
+- [Union & Intersection Types](#union--intersection-types)
+- [Literal Types](#literal-types)
+- [Type Assertions & Type Guards](#type-assertions--type-guards)
+- [Classes](#classes)
+- [Generics](#generics)
+- [Utility Types](#utility-types)
+- [Enums (Deep Dive)](#enums-deep-dive)
+- [Async / Await](#async--await)
+- [Best Practices](#best-practices)
 
 ---
 
-## 2. Check TypeScript Version
+## Setup
+
+Install TypeScript and initialize a project:
 
 ```bash
+# Install TypeScript globally
+npm i -g typescript
+
+# Check installed version
 tsc -v
-```
 
-Checks the currently installed TypeScript version.
-
----
-
-## 3. Initialize a Node.js Project
-
-```bash
+# Create a package.json
 npm init -y
-```
 
-Creates a `package.json` file with default configuration.
+# Install TypeScript as a dev dependency (recommended per-project)
+npm i --save-dev typescript
 
----
-
-## 4. Install TypeScript Locally
-
-```bash
-npm install --save-dev typescript
-```
-
-Installs TypeScript as a **development dependency** in the current project.
-
-Using a local installation is generally preferred for projects because everyone working on the project can use the same TypeScript version.
-
----
-
-## 5. Create `tsconfig.json`
-
-```bash
+# Generate a tsconfig.json
 npx tsc --init
 ```
 
-Creates a `tsconfig.json` file.
-
-`tsconfig.json` contains the configuration options that tell TypeScript how to compile the project.
-
----
-
-## TypeScript Commands
-
-| Command          | Purpose                                       |
-| ---------------- | --------------------------------------------- |
-| `tsc -v`         | Check TypeScript version                      |
-| `tsc`            | Compile TypeScript files                      |
-| `npx tsc`        | Run the locally installed TypeScript compiler |
-| `npx tsc --init` | Create `tsconfig.json`                        |
-
-### What is `tsc`?
-
-`tsc` stands for **TypeScript Compiler**.
-
-It is used to compile TypeScript (`.ts`) code into JavaScript (`.js`).
-
-For example:
-
-```bash
-tsc app.ts
-```
-
-If `app.ts` contains:
-
-```ts
-let message: string = "Hello TypeScript";
-console.log(message);
-```
-
-TypeScript can compile it into JavaScript that can be executed by a JavaScript runtime.
+| Command | Description |
+|---|---|
+| `npm i -g typescript` | Install TypeScript globally |
+| `tsc -v` | Check the installed TypeScript version |
+| `npm init -y` | Create a `package.json` file |
+| `npm i --save-dev typescript` | Install TypeScript locally as a dev dependency |
+| `npx tsc --init` | Create a `tsconfig.json` file |
+| `tsc` | Compile TypeScript (`.ts`) files into JavaScript |
 
 ---
 
-# TypeScript Types
+## Primitive Types
 
-TypeScript provides different types that help us describe what kind of values a variable can contain.
-
----
-
-## 1. Primitive Types
-
-### String
-
-```ts
+```typescript
 let userName: string = "Zeeshan";
-```
-
-The variable can only contain a string.
-
----
-
-### Number
-
-```ts
 let age: number = 26;
-```
-
-The `number` type represents integers and floating-point numbers.
-
-```ts
-let score: number = 95;
-let price: number = 99.99;
-```
-
----
-
-### Boolean
-
-```ts
 let isActive: boolean = true;
-```
-
-A boolean can contain either:
-
-```ts
-true
-```
-
-or
-
-```ts
-false
-```
-
----
-
-### BigInt
-
-```ts
 let bigNumber: bigint = 100n;
-```
-
-`bigint` is used for integers larger than the range safely supported by JavaScript's `number` type.
-
-The `n` at the end makes the value a BigInt.
-
----
-
-### Symbol
-
-```ts
 let uniqueId: symbol = Symbol("id");
-```
 
-A `symbol` creates a unique value that can be used as an object property key.
-
----
-
-# Null and Undefined
-
-`null` and `undefined` are also primitive values in JavaScript.
-
-```ts
+// null and undefined are also primitive types
 let nullValue: null = null;
-
 let undefinedValue: undefined = undefined;
 ```
 
-With strict TypeScript settings enabled, these types are handled separately from other types.
+## Arrays & Tuples
 
-For example:
-
-```ts
-let userName: string = "Zeeshan";
-```
-
-The variable cannot normally be assigned `null` or `undefined` when `strictNullChecks` is enabled.
-
----
-
-# Arrays
-
-There are two common ways to define an array type.
-
-### Using `type[]`
-
-```ts
+```typescript
+// Arrays
 let numbers: number[] = [1, 2, 3, 4, 5];
-```
-
-This means the array can contain only numbers.
-
-```ts
-let names: string[] = ["Muhammad", "Zeeshan", "Ali"];
-```
-
----
-
-### Using `Array<T>`
-
-```ts
 let names: Array<string> = ["Muhammad", "Zeeshan", "Ali"];
-```
 
-Both of the following mean essentially the same thing:
-
-```ts
-let numbers: number[] = [1, 2, 3];
-
-let numbers2: Array<number> = [1, 2, 3];
-```
-
----
-
-# Tuples
-
-A tuple is an array where the **number of elements and their types are known and fixed by position**.
-
-```ts
+// Tuples — fixed-length arrays with known types at each position
 let person: [string, number] = ["Zeeshan", 26];
 ```
 
-Here:
+## Enums
 
-* First element must be a `string`
-* Second element must be a `number`
-
-For example:
-
-```ts
-let person: [string, number] = ["Zeeshan", 26];
-```
-
-This would be incorrect:
-
-```ts
-let person: [string, number] = [26, "Zeeshan"];
-```
-
-because the order of the types is wrong.
-
----
-
-# Enum
-
-An `enum` allows us to define a set of named constants.
-
-```ts
+```typescript
 enum Color {
-    Red,
-    Green,
-    Blue
+  Red,
+  Green,
+  Blue,
 }
 
 let favoriteColor: Color = Color.Blue;
 ```
 
-By default, numeric enum members start from `0`.
+## Any vs Unknown vs Void
 
-So:
-
-```ts
-Color.Red   // 0
-Color.Green // 1
-Color.Blue  // 2
-```
-
----
-
-# Any
-
-The `any` type effectively disables TypeScript's type checking for that value.
-
-```ts
+```typescript
+// any — disables type checking entirely (avoid when possible)
 let randomValue: any = 10;
-
 randomValue = "string";
 randomValue = true;
-```
 
-The variable can contain values of different types.
-
-### Avoid `any` when possible
-
-Although `any` can be useful in some situations, using it too much removes one of TypeScript's biggest benefits: **type safety**.
-
-For example:
-
-```ts
-let value: any = "hello";
-
-value.toFixed(); // TypeScript will not complain
-```
-
-This can cause a runtime error because strings do not have a `toFixed()` method.
-
----
-
-# Unknown
-
-`unknown` is a safer alternative to `any`.
-
-```ts
+// unknown — safer alternative to 'any'; must be narrowed before use
 let userInput: unknown;
-
 userInput = 5;
 userInput = "text";
-userInput = true;
-```
 
-Like `any`, an `unknown` variable can contain values of different types.
-
-However, TypeScript **does not allow us to use an `unknown` value without first checking its type**.
-
-For example:
-
-```ts
-let userInput: unknown = "Hello";
-
-if (typeof userInput === "string") {
-    console.log(userInput.toUpperCase());
-}
-```
-
-This makes `unknown` much safer than `any`.
-
-### `any` vs `unknown`
-
-| `any`                  | `unknown`                          |
-| ---------------------- | ---------------------------------- |
-| Disables type checking | Keeps type safety                  |
-| Can be used directly   | Must be narrowed before use        |
-| Less safe              | Safer                              |
-| Avoid when possible    | Preferred for truly unknown values |
-
----
-
-# Void
-
-`void` is commonly used for functions that **do not return a value**.
-
-```ts
+// void — for functions that don't return a value
 function logMessage(message: string): void {
-    console.log(message);
+  console.log(message);
 }
 ```
 
-The function performs an action but does not return a value.
+> 💡 **Tip:** Prefer `unknown` over `any`. It forces you to check the type before using the value, keeping type safety intact.
 
----
+## Type Inference
 
-# Type Inference
+TypeScript can automatically figure out the type of a value from its initial assignment, so you don't always need to annotate it explicitly.
 
-**Type inference** means TypeScript can automatically determine the type of a value without us explicitly writing the type.
-
-For example:
-
-```ts
-let userName = "Zeeshan";
+```typescript
+let city = "Lahore"; // inferred as string, no annotation needed
 ```
 
-TypeScript automatically infers:
+## Functions
 
-```ts
-string
+```typescript
+// Basic function with types
+function add(a: number, b: number): number {
+  return a + b;
+}
+
+// Optional parameters
+function greet(name: string, greeting?: string): string {
+  if (greeting) {
+    return `${greeting}, ${name}!`;
+  }
+  return `Hello, ${name}!`;
+}
+
+console.log(greet("Zeeshan"));          // Hello, Zeeshan!
+console.log(greet("Ali", "Hi"));        // Hi, Ali!
+
+// Default parameters
+function multiply(a: number, b: number = 1): number {
+  return a * b;
+}
+
+// Rest parameters
+function sum(...numbers: number[]): number {
+  return numbers.reduce((total, n) => total + n, 0);
+}
+
+// Arrow functions
+const divide = (a: number, b: number): number => a / b;
+
+// Function types
+let calculate: (x: number, y: number) => number;
+calculate = add;
 ```
 
-So this:
+## Objects & Interfaces
 
-```ts
-let userName = "Zeeshan";
-```
-
-is effectively treated as:
-
-```ts
-let userName: string = "Zeeshan";
-```
-
----
-
-## More Type Inference Examples
-
-```ts
-let age = 26;
-// inferred as number
-
-let isActive = true;
-// inferred as boolean
-
-let numbers = [1, 2, 3];
-// inferred as number[]
-
-let user = {
-    name: "Zeeshan",
-    age: 26
+```typescript
+// Object type annotation
+let user: { name: string; age: number } = {
+  name: "Zeeshan",
+  age: 26,
 };
-// inferred as { name: string; age: number }
+
+// Interface
+interface User {
+  name: string;
+  age: number;
+  email?: string;     // optional property
+  readonly id: number; // readonly property
+}
+
+let newUser: User = {
+  id: 1,
+  name: "Zeeshan",
+  age: 25,
+};
+
+// newUser.id = 2; // ❌ Error: Cannot assign to 'id' because it is read-only
+
+// Interface with methods
+interface Product {
+  name: string;
+  price: number;
+  getDiscount(percentage: number): number;
+}
+
+let laptop: Product = {
+  name: "MacBook Pro",
+  price: 2000,
+  getDiscount(percentage: number): number {
+    return this.price * (percentage / 100);
+  },
+};
 ```
 
-Because TypeScript can often infer types automatically, we don't need to explicitly annotate every variable.
+## Type Aliases
+
+```typescript
+// Type alias for an object shape
+type Point = {
+  x: number;
+  y: number;
+};
+
+let point: Point = { x: 10, y: 20 };
+
+// Type alias for a union of primitives
+type ID = string | number;
+
+let userId: ID = "zeeshan123";
+let productId: ID = 456;
+```
+
+### Type Alias vs Interface
+
+```typescript
+// Interfaces can be extended
+interface Animal {
+  name: string;
+}
+
+interface Dog extends Animal {
+  breed: string;
+}
+
+let myDog: Dog = {
+  name: "Buddy",
+  breed: "Golden Retriever",
+};
+
+// Interfaces can be declared multiple times — they merge (declaration merging)
+interface Animal {
+  age: number;
+}
+
+let dog: Animal = {
+  age: 3,
+  name: "Buddy",
+};
+```
+
+| | Interface | Type Alias |
+|---|---|---|
+| Extending | ✅ via `extends` | ✅ via `&` (intersection) |
+| Declaration merging | ✅ yes | ❌ no |
+| Best for | Object shapes | Unions, intersections, primitives |
+
+> **Rule of thumb:** Use `interface` for object shapes and `type` for unions, intersections, and utility types.
+
+## Union & Intersection Types
+
+```typescript
+// Union types (OR) — value can be one of several types
+type Status = "pending" | "approved" | "rejected";
+
+function setStatus(status: Status): void {
+  console.log(`Status set to: ${status}`);
+}
+
+setStatus("approved");
+// setStatus("completed"); // ❌ Error!
+
+type StringOrNumber = string | number;
+
+function printId(id: StringOrNumber): void {
+  if (typeof id === "string") {
+    console.log(`ID (string): ${id.toUpperCase()}`);
+  } else {
+    console.log(`ID (number): ${id}`);
+  }
+}
+
+// Intersection types (AND) — combines multiple types into one
+interface Colorful {
+  color: string;
+}
+
+interface Circle {
+  radius: number;
+}
+
+type ColorfulCircle = Colorful & Circle;
+
+let myCircle: ColorfulCircle = {
+  color: "red",
+  radius: 10,
+};
+```
+
+## Literal Types
+
+```typescript
+// String literal types
+let direction: "north" | "south" | "east" | "west";
+direction = "north"; // ✅ OK
+// direction = "up"; // ❌ Error!
+
+// Numeric literal types
+let diceRoll: 1 | 2 | 3 | 4 | 5 | 6;
+
+// Combining literals with other types (discriminated unions)
+type SuccessResponse = {
+  status: "success";
+  data: any;
+};
+
+type ErrorResponse = {
+  status: "error";
+  message: string;
+};
+
+type ApiResponse = SuccessResponse | ErrorResponse;
+```
+
+## Type Assertions & Type Guards
+
+```typescript
+// Type assertions — tell TypeScript "trust me, I know the type"
+let someValue: unknown = "this is a string";
+let strLength: number = (someValue as string).length;
+// or
+let strLength2: number = (<string>someValue).length;
+
+// Custom type guard
+function isString(value: unknown): value is string {
+  return typeof value === "string";
+}
+
+function processValue(value: string | number): void {
+  if (isString(value)) {
+    console.log(value.toUpperCase());
+  } else {
+    console.log(value.toFixed(2));
+  }
+}
+
+// instanceof type guard
+class Dog {
+  bark() {
+    console.log("Woof!");
+  }
+}
+
+class Cat {
+  meow() {
+    console.log("Meow!");
+  }
+}
+
+function makeSound(animal: Dog | Cat): void {
+  if (animal instanceof Dog) {
+    animal.bark();
+  } else {
+    animal.meow();
+  }
+}
+```
+
+## Classes
+
+```typescript
+class Person {
+  // Properties
+  private name: string;
+  protected age: number;
+  public email: string;
+
+  constructor(name: string, age: number, email: string) {
+    this.name = name;
+    this.age = age;
+    this.email = email;
+  }
+
+  public introduce(): string {
+    return `Hi, I'm ${this.name} and I'm ${this.age} years old.`;
+  }
+
+  public getName(): string {
+    return this.name;
+  }
+
+  public setName(name: string): void {
+    this.name = name;
+  }
+}
+
+// Shorter syntax using parameter properties
+class Employee {
+  constructor(
+    private id: number,
+    public name: string,
+    protected department: string
+  ) {}
+
+  getDetails(): string {
+    return `${this.name} works in ${this.department}`;
+  }
+}
+
+let zeeshan = new Employee(101, "Zeeshan", "Engineering");
+console.log(zeeshan.getDetails()); // Zeeshan works in Engineering
+
+// Inheritance
+class Manager extends Employee {
+  constructor(
+    id: number,
+    name: string,
+    department: string,
+    private teamSize: number
+  ) {
+    super(id, name, department);
+  }
+
+  getTeamInfo(): string {
+    return `${this.name} manages ${this.teamSize} people`;
+  }
+}
+
+// Abstract classes — cannot be instantiated directly
+abstract class Shape {
+  constructor(public color: string) {}
+
+  abstract getArea(): number;
+
+  displayColor(): void {
+    console.log(`This shape is ${this.color}`);
+  }
+}
+
+class Rectangle extends Shape {
+  constructor(color: string, private width: number, private height: number) {
+    super(color);
+  }
+
+  getArea(): number {
+    return this.width * this.height;
+  }
+}
+```
+
+### Access Modifiers
+
+| Modifier | Accessible from |
+|---|---|
+| `public` (default) | Anywhere |
+| `private` | Only within the same class |
+| `protected` | Within the class and its subclasses |
+| `readonly` | Can be read but not reassigned after initialization |
+
+## Generics
+
+```typescript
+// Generic function
+function identity<T>(arg: T): T {
+  return arg;
+}
+
+let output1 = identity<string>("myString");
+let output2 = identity<number>(100);
+
+// Generic with arrays
+function getFirstElement<T>(arr: T[]): T | undefined {
+  return arr[0];
+}
+
+let firstNumber = getFirstElement([1, 2, 3]);            // number
+let firstName = getFirstElement(["Zeeshan", "Developer"]); // string
+
+// Generic interfaces
+interface KeyValuePair<K, V> {
+  key: K;
+  value: V;
+}
+
+let stringNumberPair: KeyValuePair<string, number> = {
+  key: "age",
+  value: 26,
+};
+
+// Generic classes
+class DataStorage<T> {
+  private data: T[] = [];
+
+  addItem(item: T): void {
+    this.data.push(item);
+  }
+
+  removeItem(item: T): void {
+    this.data = this.data.filter((i) => i !== item);
+  }
+
+  getItems(): T[] {
+    return [...this.data];
+  }
+}
+
+let textStorage = new DataStorage<string>();
+textStorage.addItem("Hello");
+textStorage.addItem("World");
+
+// Generic constraints — restrict T to types that have a 'length' property
+interface Lengthwise {
+  length: number;
+}
+
+function logLength<T extends Lengthwise>(arg: T): T {
+  console.log(arg.length);
+  return arg;
+}
+
+logLength("hello");   // ✅ OK
+logLength([1, 2, 3]); // ✅ OK
+// logLength(123);    // ❌ Error: number doesn't have a 'length' property
+```
+
+## Utility Types
+
+```typescript
+interface Todo {
+  title: string;
+  description: string;
+  completed: boolean;
+  createdAt: Date;
+  assignedTo: string;
+}
+
+// Partial<T> — makes all properties optional
+type PartialTodo = Partial<Todo>;
+let updateTodo: PartialTodo = {
+  completed: true,
+};
+
+// Required<T> — makes all properties required
+type RequiredTodo = Required<Todo>;
+
+// Readonly<T> — makes all properties readonly
+type ReadonlyTodo = Readonly<Todo>;
+let myTodo: ReadonlyTodo = {
+  title: "Learn TypeScript",
+  description: "Complete tutorial",
+  completed: false,
+  createdAt: new Date(),
+  assignedTo: "Zeeshan",
+};
+// myTodo.completed = true; // ❌ Error!
+
+// Pick<T, Keys> — pick specific properties
+type TodoPreview = Pick<Todo, "title" | "completed">;
+let preview: TodoPreview = {
+  title: "My Todo",
+  completed: false,
+};
+
+// Omit<T, Keys> — omit specific properties
+type TodoWithoutDate = Omit<Todo, "createdAt">;
+
+// Record<Keys, Type> — construct an object type with specific keys and a value type
+type PageInfo = {
+  title: string;
+  url: string;
+};
+
+type Pages = "home" | "about" | "contact";
+let pages: Record<Pages, PageInfo> = {
+  home: { title: "Home", url: "/" },
+  about: { title: "About", url: "/about" },
+  contact: { title: "Contact", url: "/contact" },
+};
+
+// ReturnType<T> — extract the return type of a function
+function createUser() {
+  return {
+    id: 1,
+    name: "Zeeshan",
+    email: "zeeshan@gmail.com",
+  };
+}
+
+type UserType = ReturnType<typeof createUser>;
+```
+
+| Utility Type | What it does |
+|---|---|
+| `Partial<T>` | Makes all properties optional |
+| `Required<T>` | Makes all properties required |
+| `Readonly<T>` | Makes all properties readonly |
+| `Pick<T, K>` | Selects a subset of properties |
+| `Omit<T, K>` | Excludes a subset of properties |
+| `Record<K, T>` | Builds an object type with keys `K` and values `T` |
+| `ReturnType<T>` | Extracts a function's return type |
+
+## Enums (Deep Dive)
+
+```typescript
+// Numeric enum — auto-increments from the first value
+enum Direction {
+  Up = 1,
+  Down,
+  Left,
+  Right,
+}
+
+// String enum
+enum ResponseStatus {
+  Pending = "PENDING",
+  Approved = "APPROVED",
+  Rejected = "REJECTED",
+}
+
+// Const enum — inlined at compile time, more performant
+const enum HttpStatus {
+  OK = 200,
+  BadRequest = 400,
+  Unauthorized = 401,
+  NotFound = 404,
+}
+
+function handleResponse(status: HttpStatus): void {
+  if (status === HttpStatus.OK) {
+    console.log("Success!");
+  }
+}
+```
+
+## Async / Await
+
+```typescript
+// Promise with TypeScript
+function fetchUser(id: number): Promise<{ id: number; name: string }> {
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      resolve({ id, name: "Zeeshan" });
+    }, 1000);
+  });
+}
+
+// Async/await
+async function getUserData(id: number): Promise<void> {
+  try {
+    const user = await fetchUser(id);
+    console.log(user.name);
+  } catch (error) {
+    console.error("Error fetching user:", error);
+  }
+}
+
+// Generic async function
+async function fetchData<T>(url: string): Promise<T> {
+  const response = await fetch(url);
+  return response.json();
+}
+```
+
+## Best Practices
+
+```typescript
+// ✅ DO: Enable strict mode in tsconfig.json
+// "strict": true
+
+// ✅ DO: Prefer interfaces for object shapes
+interface Developer {
+  id: number;
+  name: string;
+  skills: string[];
+}
+
+const zeeshanAli: Developer = {
+  id: 1,
+  name: "Zeeshan",
+  skills: ["React", "TypeScript", "Next.js"],
+};
+
+// ✅ DO: Use 'type' for unions and utility types
+type Id = string | number;
+
+// ✅ DO: Avoid 'any' — use 'unknown' when the type is truly unknown
+function processVal(value: unknown): void {
+  if (typeof value === "string") {
+    console.log(value.toUpperCase());
+  }
+}
+
+// ✅ DO: Use 'const' for values that won't be reassigned
+const MAX_USERS = 100;
+
+// ✅ DO: Use 'readonly' for immutable properties
+interface Config {
+  readonly apiKey: string;
+  readonly author: string;
+}
+
+const config: Config = {
+  apiKey: "abc123",
+  author: "Zeeshan",
+};
+
+// ❌ DON'T: Use 'any' unless absolutely necessary
+// let data: any = fetchData();
+
+// ❌ DON'T: Silence errors with @ts-ignore — fix the underlying issue instead
+```
+
+### Quick Checklist
+
+- [x] Enable `strict` mode in `tsconfig.json`
+- [x] Prefer `interface` for object shapes, `type` for unions/intersections
+- [x] Avoid `any`; reach for `unknown` and narrow it
+- [x] Use `readonly` and `const` wherever values shouldn't change
+- [x] Avoid `@ts-ignore` — understand and fix the error instead
 
 ---
 
-# Explicit Typing vs Type Inference
-
-### Explicit Typing
-
-We manually specify the type:
-
-```ts
-let age: number = 26;
-```
-
-### Type Inference
-
-TypeScript determines the type automatically:
-
-```ts
-let age = 26;
-```
-
-In many cases, type inference makes the code cleaner while still providing type safety.
-
----
-
-# Quick Summary
-
-| Type        | Example            | Purpose                      |
-| ----------- | ------------------ | ---------------------------- |
-| `string`    | `"Zeeshan"`        | Text                         |
-| `number`    | `26`               | Numbers                      |
-| `boolean`   | `true`             | True/false                   |
-| `bigint`    | `100n`             | Large integers               |
-| `symbol`    | `Symbol()`         | Unique values                |
-| `null`      | `null`             | Intentional absence of value |
-| `undefined` | `undefined`        | Value not assigned           |
-| `array`     | `number[]`         | Collection of values         |
-| `tuple`     | `[string, number]` | Fixed structure              |
-| `enum`      | `Color.Blue`       | Named constants              |
-| `any`       | `any`              | Disables type checking       |
-| `unknown`   | `unknown`          | Safe unknown value           |
-| `void`      | `void`             | No return value              |
-
----
-
-# Key Takeaways
-
-* TypeScript is a **superset of JavaScript**.
-* TypeScript adds **static type checking** to JavaScript.
-* TypeScript code is compiled into JavaScript.
-* `tsc` is the **TypeScript compiler**.
-* `tsconfig.json` contains TypeScript compiler configuration.
-* Type inference allows TypeScript to determine types automatically.
-* Prefer `unknown` over `any` when the type is genuinely unknown.
-* Use explicit type annotations when they improve clarity or when TypeScript cannot infer the desired type.
+*Notes compiled while learning TypeScript. Contributions and corrections welcome!*
